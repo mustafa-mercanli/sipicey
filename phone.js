@@ -1,10 +1,17 @@
+var ua;
+var registerer;
+
+var sipecyHost = localStorage.getItem('sipecyHost');
+var sipecyUser = localStorage.getItem('sipecyUser');
+var sipecyPass = localStorage.getItem('sipecyPass');
+
 setTimeout(() => {
-    const sipHost = document.getElementById("sipHost");
-    const sipUser = document.getElementById("sipUser");
-    const sipPass = document.getElementById("sipPass");
-    sipHost.value = localStorage.getItem('sipecyHost');
-    sipUser.value = localStorage.getItem('sipecyUser');
-    sipPass.value = localStorage.getItem('sipecyPass');
+    document.getElementById("sipHost").value = sipecyHost;
+    document.getElementById("sipUser").value = sipecyUser;
+    document.getElementById("sipPass").value = sipecyPass;
+
+    const btnSipConfig = document.getElementById("btn-sipconfig");
+    btnSipConfig.innerHTML = (sipecyHost && sipecyUser && sipecyPass) ? sipecyUser : "Configure";
 
     document.getElementById("btn-sipconfig").addEventListener("click",function(e) {
         const keypad = document.getElementById("keypad");
@@ -57,6 +64,21 @@ setTimeout(() => {
         keypadInput.value = keypadInput.value.substring(0, keypadInput.value.length-1);
     });
 
+    document.getElementById("btn-connect").addEventListener("click",function (e) {
+        localStorage.setItem('sipecyHost',document.getElementById("sipHost").value);
+        localStorage.setItem('sipecyUser',document.getElementById("sipUser").value);
+        localStorage.setItem('sipecyPass',document.getElementById("sipPass").value);
+        sipecyHost = localStorage.getItem('sipecyHost');
+        sipecyUser = localStorage.getItem('sipecyUser');
+        sipecyPass = localStorage.getItem('sipecyPass');
+        registerAccount();
+    });
+    
+    document.getElementById("btn-disconnect").addEventListener("click",function (e) {
+        registerer.unregister();
+    });
+
+    registerAccount();
     
 }, 100);
 
@@ -77,4 +99,55 @@ document.addEventListener("keypress",function (e) {
         keypadInput.value+=e.key;
     }
 });
+
+
+
+function registerAccount(){
+    if (!sipecyHost){
+        return;
+    }
+    
+    const url = new URL(sipecyHost);
+
+    ua = new SIP.UserAgent({
+        uri: SIP.UserAgent.makeURI(`sip:${sipecyUser}@${url.hostname}`),
+        transportOptions: {
+          server: sipecyHost
+        },
+        authorizationUsername:sipecyUser,
+        authorizationPassword: sipecyPass,
+        displayName: sipecyUser
+    });
+
+    registerer = new SIP.Registerer(ua);
+
+    registerer.stateChange.addListener(function(state){
+        console.log(`Custom Message: ${state}`);
+        if (state === "Registered"){
+            const sipStatus = document.getElementById("sip-status");
+            sipStatus.innerHTML = "Connected";
+            const btnSipConfig = document.getElementById("btn-sipconfig");
+            btnSipConfig.classList.remove("btn-sipconfig-orange");
+            btnSipConfig.classList.add("btn-sipconfig-green");
+        }
+        if (state === "Unregistered"){
+            const sipStatus = document.getElementById("sip-status");
+            sipStatus.innerHTML = "Disconnected";
+            const btnSipConfig = document.getElementById("btn-sipconfig");
+            btnSipConfig.classList.remove("btn-sipconfig-green");
+            btnSipConfig.classList.add("btn-sipconfig-orange");
+        }
+    });
+
+    ua.start().then(()=>{
+        console.log("Custom Message: Connected to the server");
+        registerer.register();
+    });
+}
+
+
+
+
+
+
 

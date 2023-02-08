@@ -1,7 +1,9 @@
 <html>
     <head>
         <link rel="stylesheet" href="phone.css">
-    <script src="phone.js"></script>
+        <script src="sip-0.21.2.min.js"></script>
+        <script src="phone.js"></script>
+
     </head>
     <body>
         <table class="tbl-status">
@@ -10,7 +12,7 @@
                     <font id="sip-status">Disconnected</font>
                 </td>
                 <td style="text-align: right;">
-                    <button id="btn-sipconfig" class="btn-sipconfig-orange">304</button>
+                    <button id="btn-sipconfig" class="btn-sipconfig-orange"></button>
                 </td>
             </tr>
         </table>
@@ -80,8 +82,8 @@
             <tr>
                 <td><button id="btn-close-sipconfig">Close</button></td>
                 <td>
-                    <button>Disconnect</button>
-                    <button>Connect</button>
+                    <button id="btn-disconnect">Disconnect</button>
+                    <button id="btn-connect">Connect</button>
                 </td>
                 <td></td>
             </tr>
