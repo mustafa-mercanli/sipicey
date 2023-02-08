@@ -1,0 +1,58 @@
+.tbl-keypad{
+    border-collapse: collapse;
+}
+.tbl-keypad td{
+    width: 60px;
+    height: 60px;
+}
+.tbl-keypad td button{
+    width: 100%;
+    height: 100%;
+}
+.btn-call-green{
+    font-size: xx-large;
+    font-weight: bold;
+    color: green;
+}
+.btn-call-red{
+    font-size: xx-large;
+    font-weight: bold;
+    color: red;
+}
+#keypad-input{
+    width: 100%;
+    height: 80%;
+    margin-bottom: 0px;
+    font-size: x-large;
+    caret-color: transparent;
+}
+.btn-sipconfig-green{
+    color: green;
+    font-size: large;
+}
+.btn-sipconfig-orange{
+    color: orange;
+    font-size: large;
+}
+
+.tbl-status{
+    border-collapse: collapse;
+}
+.tbl-status td{
+    width: 90px;
+}
+
+.tbl-sipconfig{
+    visibility: collapse;
+    border-collapse: collapse;
+}
+.tbl-sipconfig input{
+    width: 150px;
+}
+.make-visible{
+    visibility: visible;
+}
+.make-invisible{
+    visibility: collapse;
+}
+
