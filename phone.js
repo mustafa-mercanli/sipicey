@@ -1,9 +1,15 @@
 var ua;
 var registerer;
+var inviter;
+var incomingSession;
+var outgoingSession;
+var sessionState;
 
 var sipecyHost = localStorage.getItem('sipecyHost');
 var sipecyUser = localStorage.getItem('sipecyUser');
 var sipecyPass = localStorage.getItem('sipecyPass');
+
+var durationInterval;
 
 setTimeout(() => {
     document.getElementById("sipHost").value = sipecyHost;
@@ -78,6 +84,8 @@ setTimeout(() => {
         registerer.unregister();
     });
 
+    document.getElementById("btn-call").addEventListener("click",initialListener);
+
     registerAccount();
     
 }, 100);
@@ -91,15 +99,69 @@ function checkKey(e){
 }
 
 document.addEventListener("keypress",function (e) {
+    if (e.key === "Enter"){
+        document.getElementById("btn-call").click();
+        return;
+    }
+
     if (e.target.tagName.toUpperCase() == 'INPUT'){
         return;
     }
+
     if (checkKey(e)){
         const keypadInput = document.getElementById("keypad-input");
         keypadInput.value+=e.key;
     }
 });
 
+
+function makeCall(cld){
+    if (["outgoing-establishing","outgoing-established","incoming-establising","incoming-established"].includes(sessionState)){
+        return;
+    }
+   
+    const url = new URL(sipecyHost);
+    const target = SIP.UserAgent.makeURI(`sip:${cld}@${url.hostname}`);
+
+    inviter = new SIP.Inviter(ua, target);
+
+    outgoingSession = inviter;
+
+    // Setup outgoing session delegate
+    outgoingSession.delegate = {
+        // Handle incoming REFER request.
+        onRefer(referral){
+        // ...
+        }
+    };
+
+    // Handle outgoing session state changes.
+    outgoingSession.stateChange.addListener((newState) => {
+        switch (newState) {
+            case SIP.SessionState.Establishing:
+                consoleLog("Outgoing session is establishing");
+                document.getElementById("call-duration").innerHTML = "00:00";
+                sessionState = "outgoing-establishing";
+                establishingStyle();
+                break;
+            case SIP.SessionState.Established:
+                consoleLog("Outgoing session has established");
+                setupDurationInterval();
+                sessionState = "outgoing-established";
+                break;
+            case SIP.SessionState.Terminated:
+                consoleLog("Outgoing session has terminated");
+                clearDurationInterval();
+                sessionState = "outgoing-terminated";
+                initialStyle();
+                break;
+            default:
+                break;
+        }
+    });
+
+    inviter.invite();
+}
 
 
 function registerAccount(){
@@ -122,7 +184,7 @@ function registerAccount(){
     registerer = new SIP.Registerer(ua);
 
     registerer.stateChange.addListener(function(state){
-        console.log(`Custom Message: ${state}`);
+        consoleLog(`${state}`);
         if (state === "Registered"){
             const sipStatus = document.getElementById("sip-status");
             sipStatus.innerHTML = "Connected";
@@ -139,14 +201,142 @@ function registerAccount(){
         }
     });
 
+    ua.delegate = {
+        onInvite(invitation) {
+      
+          // An Invitation is a Session
+          incomingSession = invitation;
+      
+          // Setup incoming session delegate
+          incomingSession.delegate = {
+            // Handle incoming REFER request.
+            onRefer(referral) {
+              // ...
+            }
+          };
+      
+          // Handle incoming session state changes.
+          incomingSession.stateChange.addListener((newState) => {
+            switch (newState) {
+              case SIP.SessionState.Establishing:
+                consoleLog("Incoming session is establishing");
+                document.getElementById("call-duration").innerHTML = "00:00";
+                sessionState = "incoming-establishing";
+                break;
+              case SIP.SessionState.Established:
+                consoleLog("Incoming session has been established");
+                setupDurationInterval();
+                sessionState = "incoming-established";
+                break;
+              case SIP.SessionState.Terminated:
+                consoleLog("Incoming session has terminated");
+                clearDurationInterval();
+                sessionState = "incoming-terminated";
+                initialStyle();
+                break;
+              default:
+                break;
+            }
+          });
+      
+          // Handle incoming INVITE request.
+          let constrainsDefault = {
+            audio: true,
+            video: false,
+          }
+      
+          const options = {
+            sessionDescriptionHandlerOptions: {
+              constraints: constrainsDefault,
+            },
+          }
+      
+          incomingSession.accept(options)
+        }
+      };
+      
+
     ua.start().then(()=>{
-        console.log("Custom Message: Connected to the server");
+        consoleLog("Connected to the server");
         registerer.register();
     });
 }
 
+function setupDurationInterval() {
+    durationInterval = setInterval(()=>{
+        let currentDuration = document.getElementById("call-duration").innerHTML;
+        if (!currentDuration){
+            currentDuration = "00:00";
+        }
+        else{
+            const [mm,ss] = currentDuration.split(":");
+            const seconds = (parseInt(mm)*60) + parseInt(ss) + 1;
+            //consoleLog(new Date(seconds * 1000).toISOString().substring(14, 19));
+            document.getElementById("call-duration").innerHTML = new Date(seconds * 1000).toISOString().substring(14, 19);
+        }
+    },1000);
+}
+
+function clearDurationInterval(){
+    clearInterval(durationInterval);
+    document.getElementById("call-duration").innerHTML = "";
+}
+
+function endCall(){
+    switch (sessionState){
+        case "outgoing-establishing":
+            consoleLog("Outgoing call cancelled");
+            outgoingSession.cancel();
+        break;
+        case "outgoing-established":
+            outgoingSession.bye();
+            consoleLog("Outgoing call byed");
+        break;
+        case "incoming-establising":
+            incomingSession.reject();
+            consoleLog("Incoming call rejected");
+        break;
+        case "incoming-established":
+            incomingSession.bye();
+            consoleLog("Incoming call byed");
+        break;
+    }
+}
 
 
+function establishingStyle(){
+    document.getElementById("btn-call").classList.remove("btn-call-green");
+    document.getElementById("btn-call").classList.add("btn-call-red");
+    document.getElementById("btn-call").removeEventListener("click",establishingListener);
+    document.getElementById("btn-call").removeEventListener("click",initialListener);
+    document.getElementById("btn-call").addEventListener("click",establishingListener);
+}
+
+function initialStyle(){
+    document.getElementById("btn-call").classList.remove("btn-call-red");
+    document.getElementById("btn-call").classList.add("btn-call-green");
+    document.getElementById("btn-call").removeEventListener("click",establishingListener);
+    document.getElementById("btn-call").removeEventListener("click",initialListener);
+    document.getElementById("btn-call").addEventListener("click",initialListener);
+}
+
+
+function consoleLog(msg){
+    console.log(`Custom Message:`,msg);
+}
+
+
+function initialListener(e){
+    const keypadInput = document.getElementById("keypad-input");
+    if (!keypadInput.value || !registerer || registerer.state!=="Registered"){
+        return;
+    }
+    makeCall(keypadInput.value);
+}
+
+function establishingListener(e){
+    endCall();
+}
 
 
 

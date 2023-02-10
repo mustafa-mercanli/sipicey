@@ -56,3 +56,6 @@
     visibility: collapse;
 }
 
+.tbl-duration td{
+    width: 60px;
+}
