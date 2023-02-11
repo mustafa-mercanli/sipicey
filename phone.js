@@ -86,6 +86,29 @@ setTimeout(() => {
 
     document.getElementById("btn-call").addEventListener("click",initialListener);
 
+    document.getElementById("btn-answer-call").addEventListener("click",function(e){
+        // Handle incoming INVITE request.
+        let constrainsDefault = {
+            audio: true,
+            video: false,
+          }
+      
+          const options = {
+            sessionDescriptionHandlerOptions: {
+              constraints: constrainsDefault,
+            },
+          }
+      
+          incomingSession.accept(options);
+          consoleLog("Incoming call accepted");
+
+    });
+
+    document.getElementById("btn-reject-call").addEventListener("click",function(e){
+        incomingSession.reject();
+        consoleLog("Incoming call rejected");
+    });
+
     registerAccount();
     
 }, 100);
@@ -214,7 +237,17 @@ function registerAccount(){
               // ...
             }
           };
-      
+            establishingStyle();
+            
+            setTimeout(()=>{
+                incomingCallShow();
+                const displayName = invitation.incomingInviteRequest.earlyDialog.dialogState.remoteURI.normal.user;
+
+                document.getElementById("incoming_cli").innerHTML = displayName;
+                document.getElementById("keypad-input").value = displayName.startsWith("+") ? displayName.replace("+","") : displayName;
+            },500);
+            
+
           // Handle incoming session state changes.
           incomingSession.stateChange.addListener((newState) => {
             switch (newState) {
@@ -222,6 +255,7 @@ function registerAccount(){
                 consoleLog("Incoming session is establishing");
                 document.getElementById("call-duration").innerHTML = "00:00";
                 sessionState = "incoming-establishing";
+                establishingStyle();
                 break;
               case SIP.SessionState.Established:
                 consoleLog("Incoming session has been established");
@@ -239,21 +273,8 @@ function registerAccount(){
             }
           });
       
-          // Handle incoming INVITE request.
-          let constrainsDefault = {
-            audio: true,
-            video: false,
-          }
-      
-          const options = {
-            sessionDescriptionHandlerOptions: {
-              constraints: constrainsDefault,
-            },
-          }
-      
-          incomingSession.accept(options)
         }
-      };
+    };
       
 
     ua.start().then(()=>{
@@ -310,6 +331,7 @@ function establishingStyle(){
     document.getElementById("btn-call").removeEventListener("click",establishingListener);
     document.getElementById("btn-call").removeEventListener("click",initialListener);
     document.getElementById("btn-call").addEventListener("click",establishingListener);
+    incomingCallHide();
 }
 
 function initialStyle(){
@@ -318,6 +340,21 @@ function initialStyle(){
     document.getElementById("btn-call").removeEventListener("click",establishingListener);
     document.getElementById("btn-call").removeEventListener("click",initialListener);
     document.getElementById("btn-call").addEventListener("click",initialListener);
+    incomingCallHide();
+}
+
+function incomingCallShow(){
+    document.getElementById("div-outgoing-call").classList.remove("make-visible");
+    document.getElementById("div-outgoing-call").classList.add("make-invisible");
+    document.getElementById("div-incoming-call").classList.remove("make-invisible");
+    document.getElementById("div-incoming-call").classList.add("make-visible");
+}
+
+function incomingCallHide(){
+    document.getElementById("div-outgoing-call").classList.remove("make-invisible");
+    document.getElementById("div-outgoing-call").classList.add("make-visible");
+    document.getElementById("div-incoming-call").classList.remove("make-visible");
+    document.getElementById("div-incoming-call").classList.add("make-invisible");
 }
 
 

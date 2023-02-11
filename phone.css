@@ -59,3 +59,15 @@
 .tbl-duration td{
     width: 60px;
 }
+
+.tbl-incoming_call{
+    border-collapse: collapse;
+}
+.tbl-incoming_call td{
+    width: 60px;
+    height: 60px;
+}
+.tbl-incoming_call td button{
+    width: 100%;
+    height: 100%;
+}

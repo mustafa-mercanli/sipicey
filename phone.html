@@ -6,96 +6,115 @@
 
     </head>
     <body>
-        <table class="tbl-status">
-            <tr>
-                <td>
-                    <font id="sip-status">Disconnected</font>
-                </td>
-                <td style="text-align: right;">
-                    <button id="btn-sipconfig" class="btn-sipconfig-orange"></button>
-                </td>
-            </tr>
-        </table>
-        <table id="keypad" class="tbl-keypad">
-            <tr>
-                <td colspan="3">
-                    <input id="keypad-input" maxlength="15" onkeypress="return checkKey(event)"></input>
-                </td>
-            </tr>
-            <tr>
-                <td><button class="keypad-key">1</button></td>
-                <td><button class="keypad-key">2</button></td>
-                <td><button class="keypad-key">3</button></td>
-            </tr>
-            <tr>
-                <td><button class="keypad-key">4</button></td>
-                <td><button class="keypad-key">5</button></td>
-                <td><button class="keypad-key">6</button></td>
-            </tr>
-            <tr>
-                <td><button class="keypad-key">7</button></td>
-                <td><button class="keypad-key">8</button></td>
-                <td><button class="keypad-key">9</button></td>
-            </tr>
-            <tr>
-                <td><button class="keypad-key">*</button></td>
-                <td><button class="keypad-key">0</button></td>
-                <td><button class="keypad-key">#</button></td>
-            </tr>
-            <tr>
-                <td><button class="keypad-key">+</button></td>
-                <td id="call-action-div">
-                    <button id="btn-call" class="btn-call-green">&#9742;</button>
-                </td>
-                <td><button id="btn-backspace">&#10094;</button></td>
-            </tr>
-        </table>
-        <table id="sipconfig" class="tbl-sipconfig">
-            <tr>
-                <td>
-                    Host:
-                </td>
-                <td>
-                    <input id="sipHost" type="text"/>
-                </td>
-                <td>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    User:
-                </td>
-                <td>
-                    <input id="sipUser" type="text"/>
-                </td>
-                <td>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Pass:
-                </td>
-                <td>
-                    <input id="sipPass" type="password"/>
-                </td>
-                <td>
-                </td>
-            </tr>
-            <tr>
-                <td><button id="btn-close-sipconfig">Close</button></td>
-                <td>
-                    <button id="btn-connect">Connect</button>
-                    <button id="btn-disconnect">Disconnect</button>
-                </td>
-                <td></td>
-            </tr>
-        </table>
-        <table class="tbl-duration">
-            <tr>
-                <td></td>
-                <td><font id="call-duration" style="color: red;"></font></td>
-                <td></td>
-            </tr>
-        </table>
+        <div id="div-outgoing-call">
+            <table class="tbl-status">
+                <tr>
+                    <td>
+                        <font id="sip-status">Disconnected</font>
+                    </td>
+                    <td style="text-align: right;">
+                        <button id="btn-sipconfig" class="btn-sipconfig-orange"></button>
+                    </td>
+                </tr>
+            </table>
+            <table id="keypad" class="tbl-keypad">
+                <tr>
+                    <td colspan="3">
+                        <input id="keypad-input" maxlength="15" onkeypress="return checkKey(event)"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td><button class="keypad-key">1</button></td>
+                    <td><button class="keypad-key">2</button></td>
+                    <td><button class="keypad-key">3</button></td>
+                </tr>
+                <tr>
+                    <td><button class="keypad-key">4</button></td>
+                    <td><button class="keypad-key">5</button></td>
+                    <td><button class="keypad-key">6</button></td>
+                </tr>
+                <tr>
+                    <td><button class="keypad-key">7</button></td>
+                    <td><button class="keypad-key">8</button></td>
+                    <td><button class="keypad-key">9</button></td>
+                </tr>
+                <tr>
+                    <td><button class="keypad-key">*</button></td>
+                    <td><button class="keypad-key">0</button></td>
+                    <td><button class="keypad-key">#</button></td>
+                </tr>
+                <tr>
+                    <td><button class="keypad-key">+</button></td>
+                    <td id="call-action-div">
+                        <button id="btn-call" class="btn-call-green">&#9742;</button>
+                    </td>
+                    <td><button id="btn-backspace">&#10094;</button></td>
+                </tr>
+            </table>
+            <table id="sipconfig" class="tbl-sipconfig">
+                <tr>
+                    <td>
+                        Host:
+                    </td>
+                    <td>
+                        <input id="sipHost" type="text"/>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        User:
+                    </td>
+                    <td>
+                        <input id="sipUser" type="text"/>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Pass:
+                    </td>
+                    <td>
+                        <input id="sipPass" type="password"/>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                <tr>
+                    <td><button id="btn-close-sipconfig">Close</button></td>
+                    <td>
+                        <button id="btn-connect">Connect</button>
+                        <button id="btn-disconnect">Disconnect</button>
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+            <table class="tbl-duration">
+                <tr>
+                    <td></td>
+                    <td><font id="call-duration" style="color: red;"></font></td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+        <div id="div-incoming-call" class="make-invisible">
+            <table id="incoming-call" class="tbl-incoming_call">
+                <tr>
+                    <td colspan="3"><center><font id="incoming_cli"></font></center></td>
+                </tr>
+                <tr>
+                    <td>
+                        <button id="btn-reject-call" class="btn-call-red">&#9742;</button>
+                    </td>
+                    <td>
+                    </td>
+                    <td style="text-align: right;">
+                        <button id="btn-answer-call" class="btn-call-green">&#9742;</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
     </body>
 </html>
