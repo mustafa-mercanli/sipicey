@@ -16,53 +16,42 @@ var durationInterval;
 
 setTimeout(() => {
     mediaElement =  document.getElementById('mediaElement');
-    
+
     document.getElementById("sipHost").value = sipecyHost;
     document.getElementById("sipUser").value = sipecyUser;
     document.getElementById("sipPass").value = sipecyPass;
 
-    const btnSipConfig = document.getElementById("btn-sipconfig");
-    btnSipConfig.innerHTML = (sipecyHost && sipecyUser && sipecyPass) ? sipecyUser : "Configure";
+    document.getElementById("btn-sipconfig").innerHTML = (sipecyHost && sipecyUser && sipecyPass) ? sipecyUser : "Configure";
 
     document.getElementById("btn-sipconfig").addEventListener("click",function(e) {
-        const keypad = document.getElementById("keypad");
-        keypad.classList.remove('make-visible');
-        keypad.classList.add('make-invisible');
+        document.getElementById("keypad").classList.remove('make-visible');
+        document.getElementById("keypad").classList.add('make-invisible');
 
-        const btnSipConfig = document.getElementById("btn-sipconfig");
-        btnSipConfig.classList.remove('make-visible');
-        btnSipConfig.classList.add('make-invisible');
+        document.getElementById("btn-sipconfig").classList.remove('make-visible');
+        document.getElementById("btn-sipconfig").classList.add('make-invisible');
 
-        const sipconfig = document.getElementById("sipconfig");
-        sipconfig.classList.remove('make-invisible');
-        sipconfig.classList.add('make-visible');
+        document.getElementById("sipconfig").classList.remove('make-invisible');
+        document.getElementById("sipconfig").classList.add('make-visible');
     });
     
     document.getElementById("btn-close-sipconfig").addEventListener("click",function(e) {
-        const keypad = document.getElementById("keypad");
-        keypad.classList.remove('make-invisible');
-        keypad.classList.add('make-visible');
+        document.getElementById("keypad").classList.remove('make-invisible');
+        document.getElementById("keypad").classList.add('make-visible');
 
-        const btnSipConfig = document.getElementById("btn-sipconfig");
-        btnSipConfig.classList.remove('make-invisible');
-        btnSipConfig.classList.add('make-visible');
+        document.getElementById("btn-sipconfig").classList.remove('make-invisible');
+        document.getElementById("btn-sipconfig").classList.add('make-visible');
 
-        const sipconfig = document.getElementById("sipconfig");
-        sipconfig.classList.remove('make-visible');
-        sipconfig.classList.add('make-invisible');
+        document.getElementById("sipconfig").classList.remove('make-visible');
+        document.getElementById("sipconfig").classList.add('make-invisible');
 
-        const sipHost = document.getElementById("sipHost");
-        const sipUser = document.getElementById("sipUser");
-        const sipPass = document.getElementById("sipPass");
-        localStorage.setItem('sipecyHost',sipHost.value);
-        localStorage.setItem('sipecyUser',sipUser.value);
-        localStorage.setItem('sipecyPass',sipPass.value);
+        localStorage.setItem('sipecyHost',document.getElementById("sipHost").value);
+        localStorage.setItem('sipecyUser',document.getElementById("sipUser").value);
+        localStorage.setItem('sipecyPass',document.getElementById("sipPass").value);
     });
 
     for (let item of document.getElementsByClassName("keypad-key")){
         item.addEventListener("click",function(e) {
-            const keypadInput = document.getElementById("keypad-input");
-            keypadInput.value+=e.target.innerHTML;
+            document.getElementById("keypad-input").value+=e.target.innerHTML;
         });
     } 
 
@@ -71,8 +60,7 @@ setTimeout(() => {
     });
 
     document.getElementById("btn-backspace").addEventListener("click",function(e){
-        const keypadInput = document.getElementById("keypad-input");
-        keypadInput.value = keypadInput.value.substring(0, keypadInput.value.length-1);
+        document.getElementById("keypad-input").value = keypadInput.value.substring(0, keypadInput.value.length-1);
     });
 
     document.getElementById("btn-connect").addEventListener("click",function (e) {
@@ -170,7 +158,9 @@ function makeCall(cld){
                 consoleLog("Outgoing session is establishing");
                 document.getElementById("call-duration").innerHTML = "00:00";
                 sessionState = "outgoing-establishing";
-                establishingStyle();
+                establishingStyle().then(()=>{
+
+                });
                 break;
             case SIP.SessionState.Established:
                 consoleLog("Outgoing session has established");
@@ -216,18 +206,15 @@ function registerAccount(){
     registerer.stateChange.addListener(function(state){
         consoleLog(`${state}`);
         if (state === "Registered"){
-            const sipStatus = document.getElementById("sip-status");
-            sipStatus.innerHTML = "Connected";
-            const btnSipConfig = document.getElementById("btn-sipconfig");
-            btnSipConfig.classList.remove("btn-sipconfig-orange");
-            btnSipConfig.classList.add("btn-sipconfig-green");
+            document.getElementById("sip-status").innerHTML = "Connected";
+            document.getElementById("btn-sipconfig").classList.remove("btn-sipconfig-orange");
+            document.getElementById("btn-sipconfig").classList.add("btn-sipconfig-green");
+            document.getElementById("btn-sipconfig").innerHTML = sipecyUser;
         }
         if (state === "Unregistered"){
-            const sipStatus = document.getElementById("sip-status");
-            sipStatus.innerHTML = "Disconnected";
-            const btnSipConfig = document.getElementById("btn-sipconfig");
-            btnSipConfig.classList.remove("btn-sipconfig-green");
-            btnSipConfig.classList.add("btn-sipconfig-orange");
+            document.getElementById("sip-status").innerHTML = "Disconnected";
+            document.getElementById("btn-sipconfig").classList.remove("btn-sipconfig-green");
+            document.getElementById("btn-sipconfig").classList.add("btn-sipconfig-orange");
         }
     });
 
@@ -244,17 +231,13 @@ function registerAccount(){
               // ...
             }
           };
-            establishingStyle();
-
-            setTimeout(()=>{
-                incomingCallShow();
+          establishingStyle().then(()=>{
+            incomingCallShow();
                 const displayName = invitation.incomingInviteRequest.earlyDialog.dialogState.remoteURI.normal.user;
 
                 document.getElementById("incoming_cli").innerHTML = displayName;
-                document.getElementById("keypad-input").value = displayName.startsWith("+") ? displayName.replace("+","") : displayName;
-            },500);
-            
-
+                document.getElementById("keypad-input").value = displayName.startsWith("+") ? displayName.replace("+","") : displayName;     
+          });
           // Handle incoming session state changes.
           incomingSession.stateChange.addListener((newState) => {
             switch (newState) {
@@ -262,7 +245,9 @@ function registerAccount(){
                 consoleLog("Incoming session is establishing");
                 document.getElementById("call-duration").innerHTML = "00:00";
                 sessionState = "incoming-establishing";
-                establishingStyle();
+                establishingStyle().then(()=>{
+                    
+                });
                 break;
               case SIP.SessionState.Established:
                 consoleLog("Incoming session has been established");
@@ -335,12 +320,16 @@ function endCall(){
 
 
 function establishingStyle(){
-    document.getElementById("btn-call").classList.remove("btn-call-green");
-    document.getElementById("btn-call").classList.add("btn-call-red");
-    document.getElementById("btn-call").removeEventListener("click",establishingListener);
-    document.getElementById("btn-call").removeEventListener("click",initialListener);
-    document.getElementById("btn-call").addEventListener("click",establishingListener);
-    incomingCallHide();
+    return new Promise ((resolve,reject)=>{
+        document.getElementById("btn-call").classList.remove("btn-call-green");
+        document.getElementById("btn-call").classList.add("btn-call-red");
+        document.getElementById("btn-call").removeEventListener("click",establishingListener);
+        document.getElementById("btn-call").removeEventListener("click",initialListener);
+        document.getElementById("btn-call").addEventListener("click",establishingListener);
+        incomingCallHide();
+        resolve();
+    });
+    
 }
 
 function initialStyle(){
