@@ -422,3 +422,10 @@ function cleanupMedia() {
     mediaElement.srcObject = null;
     mediaElement.pause();
 }
+
+
+window.addEventListener('resize', ()=>{
+    var width = 240;
+    var height = 500;
+    window.resizeTo(width,height);
+})

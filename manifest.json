@@ -10,7 +10,7 @@
         "128":"images/128x128.png"
     },
     "action": {
-        "default_popup": "phone.html"
+        "default_popup": "popup.html"
     },
     "background": {
         "service_worker": "background.js"
