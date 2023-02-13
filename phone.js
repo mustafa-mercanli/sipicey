@@ -15,7 +15,8 @@ var sipecyDisplay = localStorage.getItem('sipecyDisplay');
 
 var durationInterval;
 
-setTimeout(() => {
+document.addEventListener('DOMContentLoaded', function () {
+
     mediaElement =  document.getElementById('mediaElement');
 
     document.getElementById("sipHost").value = sipecyHost;
@@ -113,7 +114,7 @@ setTimeout(() => {
 
     registerAccount();
     
-}, 100);
+}, false);
 
 function checkKey(e){
     if (["1","2","3","4","5","6","7","8","9","0","*","#","+"].includes(e.key)){
@@ -408,4 +409,4 @@ function setupRemoteMedia(session) {
 function cleanupMedia() {
     mediaElement.srcObject = null;
     mediaElement.pause();
-  }
+}
