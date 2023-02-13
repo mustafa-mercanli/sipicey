@@ -5,6 +5,9 @@ var incomingSession;
 var outgoingSession;
 var sessionState;
 
+var mediaElement;
+var remoteStream = new MediaStream();
+
 var sipecyHost = localStorage.getItem('sipecyHost');
 var sipecyUser = localStorage.getItem('sipecyUser');
 var sipecyPass = localStorage.getItem('sipecyPass');
@@ -12,6 +15,8 @@ var sipecyPass = localStorage.getItem('sipecyPass');
 var durationInterval;
 
 setTimeout(() => {
+    mediaElement =  document.getElementById('mediaElement');
+    
     document.getElementById("sipHost").value = sipecyHost;
     document.getElementById("sipUser").value = sipecyUser;
     document.getElementById("sipPass").value = sipecyPass;
@@ -171,12 +176,14 @@ function makeCall(cld){
                 consoleLog("Outgoing session has established");
                 setupDurationInterval();
                 sessionState = "outgoing-established";
+                setupRemoteMedia(inviter);
                 break;
             case SIP.SessionState.Terminated:
                 consoleLog("Outgoing session has terminated");
                 clearDurationInterval();
                 sessionState = "outgoing-terminated";
                 initialStyle();
+                cleanupMedia();
                 break;
             default:
                 break;
@@ -238,7 +245,7 @@ function registerAccount(){
             }
           };
             establishingStyle();
-            
+
             setTimeout(()=>{
                 incomingCallShow();
                 const displayName = invitation.incomingInviteRequest.earlyDialog.dialogState.remoteURI.normal.user;
@@ -261,12 +268,14 @@ function registerAccount(){
                 consoleLog("Incoming session has been established");
                 setupDurationInterval();
                 sessionState = "incoming-established";
+                setupRemoteMedia(invitation);
                 break;
               case SIP.SessionState.Terminated:
                 consoleLog("Incoming session has terminated");
                 clearDurationInterval();
                 sessionState = "incoming-terminated";
                 initialStyle();
+                cleanupMedia();
                 break;
               default:
                 break;
@@ -375,6 +384,17 @@ function establishingListener(e){
     endCall();
 }
 
+function setupRemoteMedia(session) {
+    session.sessionDescriptionHandler.peerConnection.getReceivers().forEach((receiver) => {
+      if (receiver.track) {
+        remoteStream.addTrack(receiver.track);
+      }
+    });
+    mediaElement.srcObject = remoteStream;
+    mediaElement.play();
+}
 
-
-
+function cleanupMedia() {
+    mediaElement.srcObject = null;
+    mediaElement.pause();
+  }
