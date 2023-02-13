@@ -213,6 +213,9 @@ function makeCall(cld){
     });
 
     inviter.invite();
+    establishingStyle().then(()=>{
+
+    });
 }
 
 
