@@ -171,7 +171,7 @@ function makeCall(cld){
     const url = new URL(sipecyHost);
     const target = SIP.UserAgent.makeURI(`sip:${cld}@${url.hostname}`);
 
-    inviter = new SIP.Inviter(ua, target);
+    inviter = new SIP.Inviter(ua, target, {earlyMedia:true});
 
     outgoingSession = inviter;
 
@@ -193,12 +193,12 @@ function makeCall(cld){
                 establishingStyle().then(()=>{
 
                 });
+                setupRemoteMedia(inviter);
                 break;
             case SIP.SessionState.Established:
                 consoleLog("Outgoing session has established");
                 setupDurationInterval();
                 sessionState = "outgoing-established";
-                setupRemoteMedia(inviter);
                 break;
             case SIP.SessionState.Terminated:
                 consoleLog("Outgoing session has terminated");
@@ -266,6 +266,7 @@ function registerAccount(){
               // ...
             }
           };
+          playIncomingTone();
           establishingStyle().then(()=>{
             incomingCallShow();
                 const displayName = invitation.incomingInviteRequest.earlyDialog.dialogState.remoteURI.normal.user;
@@ -289,6 +290,7 @@ function registerAccount(){
                 setupDurationInterval();
                 sessionState = "incoming-established";
                 setupRemoteMedia(invitation);
+                stopIncomingTone();
                 break;
               case SIP.SessionState.Terminated:
                 consoleLog("Incoming session has terminated");
@@ -296,6 +298,7 @@ function registerAccount(){
                 sessionState = "incoming-terminated";
                 initialStyle();
                 cleanupMedia();
+                stopIncomingTone();
                 break;
               default:
                 break;
@@ -429,3 +432,12 @@ window.addEventListener('resize', ()=>{
     var height = 500;
     window.resizeTo(width,height);
 })
+
+function playIncomingTone(){
+    document.getElementById('incomingTone').play();
+}
+
+function stopIncomingTone(){
+    document.getElementById('incomingTone').pause();
+    document.getElementById('incomingTone').currentTime = 0;
+}
