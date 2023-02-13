@@ -16,6 +16,15 @@ var sipecyDisplay = localStorage.getItem('sipecyDisplay');
 var durationInterval;
 
 document.addEventListener('DOMContentLoaded', function () {
+    navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(function(stream) {
+            console.log('Custom Message: You let to use your mic')
+    })
+        .catch(function(err) {
+            console.log('Custom Message: No permission for microphone!')
+            document.getElementById("error-message").innerHTML = "Microphone permission is required. Right click extenson icon and click options"
+    });
+
 
     mediaElement =  document.getElementById('mediaElement');
 
