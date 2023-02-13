@@ -204,7 +204,9 @@ function makeCall(cld){
                 consoleLog("Outgoing session has terminated");
                 clearDurationInterval();
                 sessionState = "outgoing-terminated";
-                initialStyle();
+                initialStyle().then(()=>{
+
+                });
                 cleanupMedia();
                 break;
             default:
@@ -268,11 +270,12 @@ function registerAccount(){
           };
           playIncomingTone();
           establishingStyle().then(()=>{
-            incomingCallShow();
+            incomingCallShow().then(()=>{
                 const displayName = invitation.incomingInviteRequest.earlyDialog.dialogState.remoteURI.normal.user;
 
                 document.getElementById("incoming_cli").innerHTML = displayName;
-                document.getElementById("keypad-input").value = displayName.startsWith("+") ? displayName.replace("+","") : displayName;     
+                document.getElementById("keypad-input").value = displayName.startsWith("+") ? displayName.replace("+","") : displayName;
+            });
           });
           // Handle incoming session state changes.
           incomingSession.stateChange.addListener((newState) => {
@@ -296,7 +299,9 @@ function registerAccount(){
                 consoleLog("Incoming session has terminated");
                 clearDurationInterval();
                 sessionState = "incoming-terminated";
-                initialStyle();
+                initialStyle().then(()=>{
+
+                });
                 cleanupMedia();
                 stopIncomingTone();
                 break;
@@ -364,34 +369,45 @@ function establishingStyle(){
         document.getElementById("btn-call").removeEventListener("click",establishingListener);
         document.getElementById("btn-call").removeEventListener("click",initialListener);
         document.getElementById("btn-call").addEventListener("click",establishingListener);
-        incomingCallHide();
-        resolve();
+        incomingCallHide().then(()=>{
+            resolve();
+        });
     });
     
 }
 
 function initialStyle(){
-    document.getElementById("btn-call").classList.remove("btn-call-red");
-    document.getElementById("btn-call").classList.add("btn-call-green");
-    document.getElementById("btn-call").removeEventListener("click",establishingListener);
-    document.getElementById("btn-call").removeEventListener("click",initialListener);
-    document.getElementById("btn-call").addEventListener("click",initialListener);
-    incomingCallHide();
+    return new Promise ((resolve,reject)=>{
+        document.getElementById("btn-call").classList.remove("btn-call-red");
+        document.getElementById("btn-call").classList.add("btn-call-green");
+        document.getElementById("btn-call").removeEventListener("click",establishingListener);
+        document.getElementById("btn-call").removeEventListener("click",initialListener);
+        document.getElementById("btn-call").addEventListener("click",initialListener);
+        incomingCallHide().then(()=>{
+            resolve();
+        });
+    });
 }
 
 function incomingCallShow(){
-    document.getElementById("div-outgoing-call").classList.remove("make-visible");
-    document.getElementById("div-outgoing-call").classList.add("make-invisible");
-    document.getElementById("div-incoming-call").classList.remove("make-invisible");
-    document.getElementById("div-incoming-call").classList.add("make-visible");
+    return new Promise ((resolve,reject)=>{
+        document.getElementById("div-outgoing-call").classList.remove("make-visible");
+        document.getElementById("div-outgoing-call").classList.add("make-invisible");
+        document.getElementById("div-incoming-call").classList.remove("make-invisible");
+        document.getElementById("div-incoming-call").classList.add("make-visible");
+        resolve();
+    });
 }
 
 function incomingCallHide(){
-    document.getElementById("div-outgoing-call").classList.remove("make-invisible");
-    document.getElementById("div-outgoing-call").classList.add("make-visible");
-    document.getElementById("div-incoming-call").classList.remove("make-visible");
-    document.getElementById("div-incoming-call").classList.add("make-invisible");
-}
+    return new Promise ((resolve,reject)=>{
+        document.getElementById("div-outgoing-call").classList.remove("make-invisible");
+        document.getElementById("div-outgoing-call").classList.add("make-visible");
+        document.getElementById("div-incoming-call").classList.remove("make-visible");
+        document.getElementById("div-incoming-call").classList.add("make-invisible");
+        resolve();
+    });
+}   
 
 
 function consoleLog(msg){
