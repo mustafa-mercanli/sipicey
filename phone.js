@@ -58,10 +58,6 @@ setTimeout(() => {
         });
     } 
 
-    document.getElementById("keypad-input").addEventListener("keypress",function(e){
-        return checkKey(e);
-    });
-
     document.getElementById("btn-backspace").addEventListener("click",function(e){
         document.getElementById("keypad-input").value = keypadInput.value.substring(0, keypadInput.value.length-1);
     });
@@ -107,6 +103,14 @@ setTimeout(() => {
         consoleLog("Incoming call rejected");
     });
 
+    document.getElementById("keypad-input").addEventListener("keypress",function(e){
+        if (!checkKey(e)){
+            e.preventDefault();
+        }
+    });
+
+    
+
     registerAccount();
     
 }, 100);
@@ -130,11 +134,24 @@ document.addEventListener("keypress",function (e) {
     }
 
     if (checkKey(e)){
-        const keypadInput = document.getElementById("keypad-input");
-        keypadInput.value+=e.key;
+        document.getElementById("keypad-input").value+=e.key;
     }
 });
 
+document.addEventListener("keydown",function (e) {
+    if (e.key === "Backspace"){
+        const keypadInput = document.getElementById("keypad-input").value;
+        if (keypadInput){
+            document.getElementById("keypad-input").value = keypadInput.substring(0,keypadInput.length-1);
+        }
+    }
+    if (e.key === "Delete"){
+        const keypadInput = document.getElementById("keypad-input").value;
+        if (keypadInput){
+            document.getElementById("keypad-input").value = keypadInput.slice(1);
+        }
+    }
+});
 
 function makeCall(cld){
     if (["outgoing-establishing","outgoing-established","incoming-establising","incoming-established"].includes(sessionState)){
