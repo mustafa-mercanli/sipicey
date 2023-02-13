@@ -11,6 +11,7 @@ var remoteStream = new MediaStream();
 var sipecyHost = localStorage.getItem('sipecyHost');
 var sipecyUser = localStorage.getItem('sipecyUser');
 var sipecyPass = localStorage.getItem('sipecyPass');
+var sipecyDisplay = localStorage.getItem('sipecyDisplay');
 
 var durationInterval;
 
@@ -20,6 +21,7 @@ setTimeout(() => {
     document.getElementById("sipHost").value = sipecyHost;
     document.getElementById("sipUser").value = sipecyUser;
     document.getElementById("sipPass").value = sipecyPass;
+    document.getElementById("sipDisplay").value = sipecyDisplay;
 
     document.getElementById("btn-sipconfig").innerHTML = (sipecyHost && sipecyUser && sipecyPass) ? sipecyUser : "Configure";
 
@@ -47,6 +49,7 @@ setTimeout(() => {
         localStorage.setItem('sipecyHost',document.getElementById("sipHost").value);
         localStorage.setItem('sipecyUser',document.getElementById("sipUser").value);
         localStorage.setItem('sipecyPass',document.getElementById("sipPass").value);
+        localStorage.setItem('sipecyDisplay',document.getElementById("sipDisplay").value);
     });
 
     for (let item of document.getElementsByClassName("keypad-key")){
@@ -67,9 +70,11 @@ setTimeout(() => {
         localStorage.setItem('sipecyHost',document.getElementById("sipHost").value);
         localStorage.setItem('sipecyUser',document.getElementById("sipUser").value);
         localStorage.setItem('sipecyPass',document.getElementById("sipPass").value);
+        localStorage.setItem('sipecyDisplay',document.getElementById("sipDisplay").value);
         sipecyHost = localStorage.getItem('sipecyHost');
         sipecyUser = localStorage.getItem('sipecyUser');
         sipecyPass = localStorage.getItem('sipecyPass');
+        sipecyDisplay = localStorage.getItem('sipecyDisplay');
         registerAccount();
     });
     
@@ -198,7 +203,7 @@ function registerAccount(){
         },
         authorizationUsername:sipecyUser,
         authorizationPassword: sipecyPass,
-        displayName: sipecyUser
+        displayName: sipecyDisplay || sipecyUser
     });
 
     registerer = new SIP.Registerer(ua);
@@ -209,7 +214,7 @@ function registerAccount(){
             document.getElementById("sip-status").innerHTML = "Connected";
             document.getElementById("btn-sipconfig").classList.remove("btn-sipconfig-orange");
             document.getElementById("btn-sipconfig").classList.add("btn-sipconfig-green");
-            document.getElementById("btn-sipconfig").innerHTML = sipecyUser;
+            document.getElementById("btn-sipconfig").innerHTML = sipecyDisplay || sipecyUser;
         }
         if (state === "Unregistered"){
             document.getElementById("sip-status").innerHTML = "Disconnected";
