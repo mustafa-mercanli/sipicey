@@ -24,27 +24,27 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><button class="keypad-key">1</button></td>
-                    <td><button class="keypad-key">2</button></td>
-                    <td><button class="keypad-key">3</button></td>
+                    <td><button>1</button></td>
+                    <td><button>2</button></td>
+                    <td><button>3</button></td>
                 </tr>
                 <tr>
-                    <td><button class="keypad-key">4</button></td>
-                    <td><button class="keypad-key">5</button></td>
-                    <td><button class="keypad-key">6</button></td>
+                    <td><button>4</button></td>
+                    <td><button>5</button></td>
+                    <td><button>6</button></td>
                 </tr>
                 <tr>
-                    <td><button class="keypad-key">7</button></td>
-                    <td><button class="keypad-key">8</button></td>
-                    <td><button class="keypad-key">9</button></td>
+                    <td><button>7</button></td>
+                    <td><button>8</button></td>
+                    <td><button>9</button></td>
                 </tr>
                 <tr>
-                    <td><button class="keypad-key">*</button></td>
-                    <td><button class="keypad-key">0</button></td>
-                    <td><button class="keypad-key">#</button></td>
+                    <td><button>*</button></td>
+                    <td><button>0</button></td>
+                    <td><button>#</button></td>
                 </tr>
                 <tr>
-                    <td><button class="keypad-key">+</button></td>
+                    <td><button>+</button></td>
                     <td id="call-action-div">
                         <button id="btn-call" class="btn-call-green">&#9742;</button>
                     </td>
@@ -107,7 +107,7 @@
                 </tr>
             </table>
         </div>
-        <div id="div-incoming-call" class="make-invisible">
+        <div id="div-incoming-call" style="display: none;">
             <table id="incoming-call" class="tbl-incoming_call">
                 <tr>
                     <td colspan="3"><center><font id="incoming_cli"></font></center></td>
@@ -125,8 +125,8 @@
             </table>
         </div>
         <font id="error-message" style="color: red;"></font>
-        <audio id="mediaElement" class="make-invisible"></audio>
-        <audio id="incomingTone" class="make-invisible" loop>
+        <audio id="mediaElement" style="display: none;"></audio>
+        <audio id="incomingTone" style="display: none;" loop>
             <source src="media/incoming.wav">
         </audio>
     </body>
