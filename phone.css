@@ -43,7 +43,7 @@
 }
 
 .tbl-sipconfig{
-    visibility: collapse;
+    display: none;
     border-collapse: collapse;
 }
 .tbl-sipconfig input{
