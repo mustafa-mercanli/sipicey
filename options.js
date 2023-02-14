@@ -1,7 +1,7 @@
 navigator.mediaDevices.getUserMedia({ audio: true })
     .then(function(stream) {
-        console.log('Custom Message: You let to use your mic')
+        console.log(`${new Date().toISOString()} Custom Message: You let to use your mic`);
 })
     .catch(function(err) {
-        console.log('Custom Message: No permission for microphone!')
+        console.log(`${new Date().toISOString()} Custom Message: No permission for microphone!`);
 });

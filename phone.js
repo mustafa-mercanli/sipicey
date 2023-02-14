@@ -18,10 +18,10 @@ var durationInterval;
 document.addEventListener('DOMContentLoaded', function () {
     navigator.mediaDevices.getUserMedia({ audio: true })
         .then(function(stream) {
-            console.log('Custom Message: You let to use your mic')
+            consoleLog('You let to use your mic')
     })
         .catch(function(err) {
-            console.log('Custom Message: No permission for microphone!')
+            consoleLog('No permission for microphone!')
             document.getElementById("error-message").innerHTML = "Microphone permission is required. Right click extenson icon and click options"
     });
 
@@ -394,7 +394,7 @@ function incomingCallHide(){
 
 
 function consoleLog(msg){
-    console.log(`Custom Message:`,msg);
+    console.log(`${new Date().toISOString()} Custom Message:`,msg);
 }
 
 
