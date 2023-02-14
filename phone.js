@@ -248,58 +248,54 @@ function registerAccount(){
     ua.delegate = {
         onInvite(invitation) {
       
-          // An Invitation is a Session
-          incomingSession = invitation;
+            // An Invitation is a Session
+            incomingSession = invitation;
       
           // Setup incoming session delegate
-          incomingSession.delegate = {
+            incomingSession.delegate = {
             // Handle incoming REFER request.
             onRefer(referral) {
-              // ...
+                // ...
             }
-          };
-          playIncomingTone();
-          //establishingStyle().then(()=>{
-            outgoingCallHide().then(()=>{
-                incomingCallShow().then(()=>{
-                    const displayName = invitation.incomingInviteRequest.earlyDialog.dialogState.remoteURI.normal.user;
-                    document.getElementById("incoming_cli").innerHTML = displayName;
-                    document.getElementById("keypad-input").value = displayName.startsWith("+") ? displayName.replace("+","") : displayName;
-                });
-            })
-          //});
-          // Handle incoming session state changes.
-          incomingSession.stateChange.addListener((newState) => {
-            switch (newState) {
-              case SIP.SessionState.Establishing:
-                consoleLog("Incoming session is establishing");
-                document.getElementById("call-duration").innerHTML = "00:00";
-                sessionState = "incoming-establishing";
-                break;
-              case SIP.SessionState.Established:
-                consoleLog("Incoming session has been established");
-                setupDurationInterval();
-                sessionState = "incoming-established";
-                setupRemoteMedia(invitation);
-                stopIncomingTone();
-                establishingStyle().then(()=>{
-                    
-                });
-                break;
-              case SIP.SessionState.Terminated:
-                consoleLog("Incoming session has terminated");
-                clearDurationInterval();
-                sessionState = "incoming-terminated";
-                initialStyle().then(()=>{
+            };
+            playIncomingTone();
+            outgoingCallHide();
+            incomingCallShow();
+            const displayName = invitation.incomingInviteRequest.earlyDialog.dialogState.remoteURI.normal.user;
+            document.getElementById("incoming_cli").innerHTML = displayName;
+            document.getElementById("keypad-input").value = displayName.startsWith("+") ? displayName.replace("+","") : displayName;
+            // Handle incoming session state changes.
+            incomingSession.stateChange.addListener((newState) => {
+                switch (newState) {
+                    case SIP.SessionState.Establishing:
+                        consoleLog("Incoming session is establishing");
+                        document.getElementById("call-duration").innerHTML = "00:00";
+                        sessionState = "incoming-establishing";
+                        break;
+                    case SIP.SessionState.Established:
+                        consoleLog("Incoming session has been established");
+                        setupDurationInterval();
+                        sessionState = "incoming-established";
+                        setupRemoteMedia(invitation);
+                        stopIncomingTone();
+                        establishingStyle().then(()=>{
+                            
+                        });
+                        break;
+                    case SIP.SessionState.Terminated:
+                        consoleLog("Incoming session has terminated");
+                        clearDurationInterval();
+                        sessionState = "incoming-terminated";
+                        initialStyle().then(()=>{
 
-                });
-                cleanupMedia();
-                stopIncomingTone();
-                break;
-              default:
-                break;
-            }
-          });
+                        });
+                        cleanupMedia();
+                        stopIncomingTone();
+                        break;
+                    default:
+                        break;
+                }
+            });
       
         }
     };
@@ -355,61 +351,45 @@ function endCall(){
 
 function establishingStyle(){
     return new Promise ((resolve,reject)=>{
-        incomingCallHide().then(()=>{
-            outgoingCallShow().then(()=>{
-                document.getElementById("btn-call").classList.remove("btn-call-green");
-                document.getElementById("btn-call").classList.add("btn-call-red");
-                document.getElementById("btn-call").removeEventListener("click",establishingListener);
-                document.getElementById("btn-call").removeEventListener("click",initialListener);
-                document.getElementById("btn-call").addEventListener("click",establishingListener);
-                resolve();
-            });
-        });
+        incomingCallHide();
+        outgoingCallShow();
+        document.getElementById("btn-call").classList.remove("btn-call-green");
+        document.getElementById("btn-call").classList.add("btn-call-red");
+        document.getElementById("btn-call").removeEventListener("click",establishingListener);
+        document.getElementById("btn-call").removeEventListener("click",initialListener);
+        document.getElementById("btn-call").addEventListener("click",establishingListener);
+        resolve();
     });
     
 }
 
 function initialStyle(){
     return new Promise ((resolve,reject)=>{
-        incomingCallHide().then(()=>{
-            outgoingCallShow().then(()=>{
-                document.getElementById("btn-call").classList.remove("btn-call-red");
-                document.getElementById("btn-call").classList.add("btn-call-green");
-                document.getElementById("btn-call").removeEventListener("click",establishingListener);
-                document.getElementById("btn-call").removeEventListener("click",initialListener);
-                document.getElementById("btn-call").addEventListener("click",initialListener);
-                resolve();
-            });
-        });
+        incomingCallHide();
+        outgoingCallShow();
+        document.getElementById("btn-call").classList.remove("btn-call-red");
+        document.getElementById("btn-call").classList.add("btn-call-green");
+        document.getElementById("btn-call").removeEventListener("click",establishingListener);
+        document.getElementById("btn-call").removeEventListener("click",initialListener);
+        document.getElementById("btn-call").addEventListener("click",initialListener);
+        resolve();
     });
 }
 
 function outgoingCallShow(){
-    return new Promise((resolve,reject)=>{
-        document.getElementById("div-outgoing-call").style.display = "block";
-        resolve();
-    })
+    document.getElementById("div-outgoing-call").style.display = "block";
 }
 
 function outgoingCallHide(){
-    return new Promise((resolve,reject)=>{
-        document.getElementById("div-outgoing-call").style.display = "none";
-        resolve();
-    })
+    document.getElementById("div-outgoing-call").style.display = "none";
 }
 
 function incomingCallShow(){
-    return new Promise ((resolve,reject)=>{
-        document.getElementById("div-incoming-call").style.display = "block";
-        resolve();
-    });
+    document.getElementById("div-incoming-call").style.display = "block";
 }
 
 function incomingCallHide(){
-    return new Promise ((resolve,reject)=>{
-        document.getElementById("div-incoming-call").style.display = "none";
-        resolve();
-    });
+    document.getElementById("div-incoming-call").style.display = "none";
 }   
 
 
