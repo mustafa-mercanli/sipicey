@@ -1,11 +1,11 @@
 var height = 500;
 var width = 240;
-var top = window.innerHeight-height;
-var left = window.innerWidth-width;
+var t = window.screen.availHeight;
+var l = window.screen.availWidth;
 
 var popupWindow = window.open(
     "./phone.html",
     "sipiceyPopup",
-    `toolbar=no,scrollbars=no,resizable=no,width=${width},height=${height},left=${left},top=${top}`
+    `toolbar=no,scrollbars=no,resizable=no,width=${width},height=${height},top=${t},left=${l}`
 );
 window.close(); // close the Chrome extension pop-up

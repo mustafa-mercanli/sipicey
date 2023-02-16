@@ -15,7 +15,7 @@ var sipecyDisplay = localStorage.getItem('sipecyDisplay');
 
 var durationInterval;
 
-var CONTEXT_MENU_ID="sipiceycontextmenuid"
+var CONTEXT_MENU_ID="sipiceycontextmenuid";
 
 document.addEventListener('DOMContentLoaded', function () {
     navigator.mediaDevices.getUserMedia({ audio: true })
@@ -459,3 +459,5 @@ chrome.contextMenus.create({
 chrome.contextMenus.onClicked.addListener(
     makeContextCall
   )
+
+
