@@ -15,6 +15,8 @@ var sipecyDisplay = localStorage.getItem('sipecyDisplay');
 
 var durationInterval;
 
+var CONTEXT_MENU_ID="sipiceycontextmenuid"
+
 document.addEventListener('DOMContentLoaded', function () {
     navigator.mediaDevices.getUserMedia({ audio: true })
         .then(function(stream) {
@@ -59,7 +61,8 @@ document.addEventListener('DOMContentLoaded', function () {
     } 
 
     document.getElementById("btn-backspace").addEventListener("click",function(e){
-        document.getElementById("keypad-input").value = keypadInput.value.substring(0, keypadInput.value.length-1);
+        const keypadInput =  document.getElementById("keypad-input");
+        keypadInput.value = keypadInput.value.substring(0, keypadInput.value.length-1);
     });
 
     document.getElementById("btn-connect").addEventListener("click",function (e) {
@@ -440,3 +443,19 @@ function stopIncomingTone(){
     document.getElementById('incomingTone').pause();
     document.getElementById('incomingTone').currentTime = 0;
 }
+
+function makeContextCall(info, tab) {
+    document.getElementById('keypad-input').value = info.selectionText.replace(/\D/g,'');
+    initialListener();
+    
+}
+
+chrome.contextMenus.create({
+    title: "sipicey call: %s", 
+    contexts:["selection"], 
+    id: CONTEXT_MENU_ID
+});
+
+chrome.contextMenus.onClicked.addListener(
+    makeContextCall
+  )
